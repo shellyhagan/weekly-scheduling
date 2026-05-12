@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<!-- saved from url=(0054)file:///C:/Users/Shelly%20Hagan/Downloads/index_5.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Scheduling — Accelerated Analytics</title>
+<link href="./Weekly Scheduling — Accelerated Analytics_files/css2" rel="stylesheet">
+<style>
+:root{--navy:#0f2744;--navy-light:#2d5282;--cream:#faf9f6;--surface:#fff;--border:#e2ddd6;--border-strong:#c8c2b8;--text:#1a1714;--text-muted:#8a8278;--critical-bg:#fde8e8;--critical:#7b1d1d;--high-bg:#fff0f0;--high:#c53030;--med-bg:#fef8ec;--med:#92580a;--wait-bg:#eef4fd;--wait:#1a4fa0;--done-bg:#edfaf2;--done:#276749;--low-bg:#f3f2ef;--low:#5c5a55;--r:10px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+header{background:var(--navy);padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-img{background:#fff;border-radius:6px;padding:4px 8px;display:flex;align-items:center;}
+.logo-img img{height:28px;display:block;}
+.logo-text{color:#94a3b8;font-size:13px;font-weight:400;border-left:1px solid rgba(255,255,255,.15);padding-left:12px;}
+.header-right{display:flex;align-items:center;gap:12px;}
+.last-updated{color:#94a3b8;font-size:11px;font-family:'DM Mono',monospace;}
+.refresh-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#cbd5e1;font-size:12px;font-family:'DM Sans',sans-serif;padding:5px 12px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;}
+.refresh-btn:hover{background:rgba(255,255,255,.15);color:#fff;}
+.live-badge{display:flex;align-items:center;gap:5px;font-size:11px;color:#4ade80;font-family:'DM Mono',monospace;}
+.pulse{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.main{padding:22px 28px;max-width:1440px;margin:0 auto;}
+.error-msg{background:#fde8e8;border:1px solid #fca5a5;border-radius:var(--r);padding:14px 18px;margin-bottom:18px;font-size:13px;color:#7b1d1d;}
+.error-msg strong{display:block;margin-bottom:4px;font-size:14px;}
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:20px;}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
+.stat-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:6px;}
+.stat-val{font-size:28px;font-weight:700;letter-spacing:-.04em;line-height:1;}
+.c-critical{color:var(--critical);} .c-wait{color:var(--wait);} .c-navy{color:var(--navy);} .c-done{color:var(--done);}
+.tab-bar{display:flex;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:3px;width:fit-content;margin-bottom:20px;}
+.tab{font-size:13px;font-weight:500;padding:7px 20px;border-radius:7px;border:none;background:transparent;color:var(--text-muted);cursor:pointer;transition:all .15s;}
+.tab.active{background:var(--navy);color:#fff;}
+.tab:hover:not(.active){color:var(--text);background:var(--cream);}
+.legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:18px;}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);}
+.leg-dot{width:8px;height:8px;border-radius:50%;}
+.ops-grid{display:grid;gap:12px;}
+.col-head{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:7px;margin-bottom:8px;display:flex;justify-content:space-between;}
+.col-body{display:flex;flex-direction:column;gap:7px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;transition:border-color .15s,box-shadow .15s;animation:fadeIn .25s ease forwards;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.card:hover{border-color:var(--border-strong);box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.card.is-critical{border-left:3px solid var(--critical);}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:3px;}
+.card-name{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;}
+.badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:99px;flex-shrink:0;font-family:'DM Mono',monospace;white-space:nowrap;}
+.b-critical{background:var(--critical-bg);color:var(--critical);}
+.b-high{background:var(--high-bg);color:var(--high);}
+.b-med{background:var(--med-bg);color:var(--med);}
+.b-wait{background:var(--wait-bg);color:var(--wait);}
+.b-done{background:var(--done-bg);color:var(--done);}
+.b-low{background:var(--low-bg);color:var(--low);}
+.card-proj{font-size:10px;color:var(--text-muted);margin-bottom:5px;font-family:'DM Mono',monospace;}
+.card-owner{display:flex;align-items:center;gap:5px;}
+.av{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0;}
+.owner-label{font-size:10px;color:var(--text-muted);}
+.card-note{font-size:10px;color:var(--text-muted);margin-top:6px;border-top:1px solid var(--border);padding-top:5px;line-height:1.5;}
+.section{margin-bottom:28px;}
+.section-head{display:flex;align-items:center;gap:12px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.section-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.section-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.section-title{font-size:15px;font-weight:600;color:var(--text);}
+.section-sub{font-size:11px;color:var(--text-muted);margin-top:1px;}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:14px;}
+.spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:var(--text-muted);}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-img"><img src="data:image/jpeg;base64,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" alt="Accelerated Analytics"></div>
+    <span class="logo-text">Weekly Scheduling</span>
+  </div>
+  <div class="header-right">
+    <span class="last-updated" id="last-updated">Updated May 12 at 8:26 AM</span>
+    <div class="live-badge" id="live-badge" style="display: flex;"><div class="pulse"></div>Live</div>
+    <button class="refresh-btn" onclick="loadData()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+      Refresh
+    </button>
+  </div>
+</header>
+<div class="main"><div id="app">
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Total Projects</div><div class="stat-val c-navy">29</div></div>
+      <div class="stat"><div class="stat-label">Critical</div><div class="stat-val c-critical">4</div></div>
+      <div class="stat"><div class="stat-label">Waiting Client</div><div class="stat-val c-wait">6</div></div>
+      <div class="stat"><div class="stat-label">Onboarding</div><div class="stat-val">3</div></div>
+      <div class="stat"><div class="stat-label">Completed</div><div class="stat-val c-done">0</div></div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab active" onclick="renderDashboard(currentProjects,&#39;ops&#39;)">Operational</button>
+      <button class="tab" onclick="renderDashboard(currentProjects,&#39;owner&#39;)">By owner</button>
+      <button class="tab" onclick="renderDashboard(currentProjects,&#39;type&#39;)">By project type</button>
+    </div>
+    <div class="legend">
+      <span style="font-size:11px;font-weight:600;color:var(--text-muted);margin-right:2px;">Priority:</span>
+      <div class="leg"><div class="leg-dot" style="background:var(--critical)"></div>Critical</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--high)"></div>High</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--med)"></div>Medium</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--wait)"></div>Waiting</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--done)"></div>Completed</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--low)"></div>Low</div>
+    </div>
+    <div class="ops-grid" style="grid-template-columns:repeat(5,minmax(0,1fr))">
+    <div>
+        <div class="col-head" style="">Customer<span>10</span></div>
+        <div class="col-body"><div class="card is-critical">
+    <div class="card-top"><span class="card-name">Dolce &amp; Gabbana</span><span class="badge b-critical">Critical</span></div>
+    <div class="card-proj">Stewardship</div>
+    <div class="card-owner"><div class="av" style="background:#e1f5ee;color:#0f6e56;">RB</div><span class="owner-label">Ryan Bruck</span></div>
+    <div class="card-note">load Sales Plans, updates</div>
+  </div><div class="card is-critical">
+    <div class="card-top"><span class="card-name">Augustinus Bader</span><span class="badge b-critical">Critical</span></div>
+    <div class="card-proj">Saks source migration to Skypad</div>
+    <div class="card-owner"><div class="av" style="background:#e6f1fb;color:#1a4fa0;">JM</div><span class="owner-label">Jeff Morrison</span></div>
+    <div class="card-note">Current source for NM and BG = SPS. Emailed client to requesst Skypad access. JAM 5.8.26</div>
+  </div><div class="card is-critical">
+    <div class="card-top"><span class="card-name">Puig</span><span class="badge b-critical">Critical</span></div>
+    <div class="card-proj">Saks source migration to Skypad</div>
+    <div class="card-owner"><div class="av" style="background:#e6f1fb;color:#1a4fa0;">JM</div><span class="owner-label">Jeff Morrison</span></div>
+    <div class="card-note">Current source for NM and BG = SPS. Emailed client to requesst Skypad access. JAM 5.8.26</div>
+  </div><div class="card is-critical">
+    <div class="card-top"><span class="card-name">DuPont PBS</span><span class="badge b-critical">Critical</span></div>
+    <div class="card-proj">Hallmark data cleanup</div>
+    <div class="card-owner"><div class="av" style="background:#e6f1fb;color:#1a4fa0;">JM</div><span class="owner-label">Jeff Morrison</span></div>
+    <div class="card-note">Hallmark sent dist SKU not D-code which created many:1 relationsihp and is wrong item key. Purge bad itesm, replace with new file …</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">BHG</span><span class="badge b-med">Medium</span></div>
+    <div class="card-proj">PBI</div>
+    <div class="card-owner"><div class="av" style="background:#faece7;color:#8a3a1a;">SS</div><span class="owner-label">Scott Shadle</span></div>
+    <div class="card-note">Move from CTI to fabric</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">Huda</span><span class="badge b-med">Medium</span></div>
+    <div class="card-proj">PBI</div>
+    <div class="card-owner"><div class="av" style="background:#faece7;color:#8a3a1a;">SS</div><span class="owner-label">Scott Shadle</span></div>
+    <div class="card-note">Move from CTI to fabric</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">Brahmin</span><span class="badge b-med">Medium</span></div>
+    <div class="card-proj">Markdown report</div>
+    <div class="card-owner"><div class="av" style="background:#e6f1fb;color:#1a4fa0;">JM</div><span class="owner-label">Jeff Morrison</span></div>
+    <div class="card-note">Customer requested to track 1st mark, 2nd mark, etc... No obvious tagging to complete. Working on view to see change in AUR by wee…</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">Coty Lux</span><span class="badge b-med">Medium</span></div>
+    <div class="card-proj">Power BI</div>
+    <div class="card-owner"><div class="av" style="background:#b5d4f4;color:#0c447c;">CS</div><span class="owner-label">Chad Symens</span></div>
+    <div class="card-note">Fabric PBI go live 7/31 latest.  Project plan has been presented to Coty so we must stay on schedule with weekly tracking.
+
+Coty i…</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">PDC</span><span class="badge b-med">Medium</span></div>
+    <div class="card-proj">Consulting Project</div>
+    <div class="card-owner"><div class="av" style="background:#b5d4f4;color:#0c447c;">CS</div><span class="owner-label">Chad Symens</span></div>
+    
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">Coty Lux</span><span class="badge b-med">Medium</span></div>
+    <div class="card-proj">BSM Report</div>
+    <div class="card-owner"><div class="av" style="background:#e8e6e0;color:#6b6860;">—</div><span class="owner-label">Unassigned</span></div>
+    
+  </div></div>
+      </div><div>
+        <div class="col-head" style="">R&amp;D<span>6</span></div>
+        <div class="col-body"><div class="card">
+    <div class="card-top"><span class="card-name">Venus Beauty Demo</span><span class="badge b-high">High</span></div>
+    
+    <div class="card-owner"><div class="av" style="background:#fbeaf0;color:#8a3256;">PS</div><span class="owner-label">Peter Spillane</span></div>
+    <div class="card-note">Slack Link</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">Store Database</span><span class="badge b-med">Medium</span></div>
+    <div class="card-proj">New Fabric Version</div>
+    <div class="card-owner"><div class="av" style="background:#faece7;color:#8a3a1a;">SS</div><span class="owner-label">Scott Shadle</span></div>
+    
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">Prod Development - Venus</span><span class="badge b-med">Medium</span></div>
+    <div class="card-proj">Demo</div>
+    <div class="card-owner"><div class="av" style="background:#fbeaf0;color:#8a3256;">PS</div><span class="owner-label">Peter Spillane</span></div>
+    <div class="card-note">Needs to populated with a bit more data.</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">Product Development</span><span class="badge b-med">Medium</span></div>
+    <div class="card-proj">Weekly Trend Report Add LY to Future Weeks</div>
+    <div class="card-owner"><div class="av" style="background:#fbeaf0;color:#8a3256;">PS</div><span class="owner-label">Peter Spillane</span></div>
+    <div class="card-note">W/Kevin currently. Report is close for QA.</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">Prod Development - Dillard's</span><span class="badge b-med">Medium</span></div>
+    <div class="card-proj">Prod Dev</div>
+    <div class="card-owner"><div class="av" style="background:#fbeaf0;color:#8a3256;">PS</div><span class="owner-label">Peter Spillane</span></div>
+    <div class="card-note">6 weeks of tasks added for Scott and Steve. SSH 2.20.2026 [crs - demo reprot go live next week for trade show, targeting mid May t…</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">Mission Control</span><span class="badge b-low">Low</span></div>
+    <div class="card-proj">Semantic Model</div>
+    <div class="card-owner"><div class="av" style="background:#9fe1cb;color:#085041;">SH</div><span class="owner-label">Shelly Hagan</span></div>
+    <div class="card-note">Cube has started, but does not have data.</div>
+  </div></div>
+      </div><div>
+        <div class="col-head" style="">Internal Training<span>3</span></div>
+        <div class="col-body"><div class="card">
+    <div class="card-top"><span class="card-name">Saks Global (SkyPad)</span><span class="badge b-high">High</span></div>
+    
+    <div class="card-owner"><div class="av" style="background:#e8e6e0;color:#6b6860;">—</div><span class="owner-label">Unassigned</span></div>
+    <div class="card-note">Received word from FFD there may be changes coming. SSH 5/1</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">New Employee Training</span><span class="badge b-high">High</span></div>
+    <div class="card-proj">Patrick Medina</div>
+    <div class="card-owner"><div class="av" style="background:#e1f5ee;color:#0f6e56;">RB</div><span class="owner-label">Ryan Bruck</span></div>
+    <div class="card-note">10th week- good questions- cross training</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">Internal</span><span class="badge b-high">High</span></div>
+    <div class="card-proj">Cross Training with PBI</div>
+    <div class="card-owner"><div class="av" style="background:#e1f5ee;color:#0f6e56;">RB</div><span class="owner-label">Ryan Bruck</span></div>
+    <div class="card-note">Cross Training with PBI, Ryan, Jeff, Waylon, Nic, Patrick, and Tim</div>
+  </div></div>
+      </div><div>
+        <div class="col-head" style="">Onaboarding<span>4</span></div>
+        <div class="col-body"><div class="card">
+    <div class="card-top"><span class="card-name">Bounce Curl</span><span class="badge b-med">Medium</span></div>
+    
+    <div class="card-owner"><div class="av" style="background:#eeedfe;color:#4c3dc2;">WB</div><span class="owner-label">Waylon Binger</span></div>
+    <div class="card-note">Processed additional 4 weeks of history using Kevins new converter.  Training later today. -WCB 5/8</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">Europerfumes</span><span class="badge b-med">Medium</span></div>
+    <div class="card-proj">Onboarding</div>
+    <div class="card-owner"><div class="av" style="background:#eeedfe;color:#4c3dc2;">WB</div><span class="owner-label">Waylon Binger</span></div>
+    <div class="card-note">•	NEW FIELD PLAN- Complete, Processed, Available
+•	NEW Brands All complete except Essential Parfumes.  Still waiting on this bran…</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">The Maker</span><span class="badge b-med">Medium</span></div>
+    <div class="card-proj">Onboarding</div>
+    <div class="card-owner"><div class="av" style="background:#eeedfe;color:#4c3dc2;">WB</div><span class="owner-label">Waylon Binger</span></div>
+    <div class="card-note">Had a call this week to go over VDFs, waiting on them to be returned, Plan Data, all Images are in. Hope to train them next week. …</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">Clean Skin Club</span><span class="badge b-med">Medium</span></div>
+    <div class="card-proj">Onboarding</div>
+    <div class="card-owner"><div class="av" style="background:#eeedfe;color:#4c3dc2;">WB</div><span class="owner-label">Waylon Binger</span></div>
+    <div class="card-note">EDI requested and acknowledged, All history pulled and processed + one additional week (full history intact), Kickoff call 2 days …</div>
+  </div></div>
+      </div><div>
+        <div class="col-head" style="background:var(--wait-bg);color:var(--wait);border-color:#b8cfee;">⏳ Waiting on Client<span>6</span></div>
+        <div class="col-body"><div class="card">
+    <div class="card-top"><span class="card-name">Puig</span><span class="badge b-wait">Waiting</span></div>
+    <div class="card-proj">Switch from SRP $ to markdown $</div>
+    <div class="card-owner"><div class="av" style="background:#e6f1fb;color:#1a4fa0;">JM</div><span class="owner-label">Jeff Morrison</span></div>
+    <div class="card-note">Currently finalizing project scope. Project will entail setting up Nordstrom portal and Ulta portal to add markdown $ and updating…</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">Brahmin</span><span class="badge b-wait">Waiting</span></div>
+    <div class="card-proj">DTC source update</div>
+    <div class="card-owner"><div class="av" style="background:#e6f1fb;color:#1a4fa0;">JM</div><span class="owner-label">Jeff Morrison</span></div>
+    <div class="card-note">Details TBD. Tom reached out this week to initiate conversation. I will know more next week after we meet. JAM 4.10.26 Awiating re…</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">HOT</span><span class="badge b-wait">Waiting</span></div>
+    <div class="card-proj">HOT Tools history cleanup</div>
+    <div class="card-owner"><div class="av" style="background:#faeeda;color:#7a4a0a;">TN</div><span class="owner-label">Tim Nguyen</span></div>
+    <div class="card-note">Bad history provided by client @ setup. Purge and reprocess in 2026 after SOW approved and we have samples. Awaiting samples. 1.9.…</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">HOT</span><span class="badge b-wait">Waiting</span></div>
+    <div class="card-proj">Custom field report</div>
+    <div class="card-owner"><div class="av" style="background:#e6f1fb;color:#1a4fa0;">JM</div><span class="owner-label">Jeff Morrison</span></div>
+    <div class="card-note">SOW in progress. SOW sent to client. Awaiting approval. JAM 1.9.26. Appears to be dead. Will inquire on call next week and close i…</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">HOT</span><span class="badge b-wait">Waiting</span></div>
+    <div class="card-proj">Report</div>
+    <div class="card-owner"><div class="av" style="background:#e6f1fb;color:#1a4fa0;">JM</div><span class="owner-label">Jeff Morrison</span></div>
+    <div class="card-note">Report going live going straight to Beta. Holly needs to clarify a few things before full QA. JAM 10.24.25 Meeting with HOT today.…</div>
+  </div><div class="card">
+    <div class="card-top"><span class="card-name">HOT</span><span class="badge b-wait">Waiting</span></div>
+    <div class="card-proj">4 retailer expansion</div>
+    <div class="card-owner"><div class="av" style="background:#e6f1fb;color:#1a4fa0;">JM</div><span class="owner-label">Jeff Morrison</span></div>
+    <div class="card-note">Wriring consolidated SOW as closing tactic. Ala carte quote summed to $4,647 setup and $1,625/mo. All or none SOW = $1,400/mo and …</div>
+  </div></div>
+      </div>
+  </div></div></div>
+<script>
+// ── LIVE DATA CONFIG ──────────────────────────────────────────────────────────
+// Your published Google Sheet CSV URL — update this if you republish the sheet
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRaWm2YqsKEpXGOWXDksB3NajwH-wv4lChHBzDUtrw2RUzQ2TvWUKNyDIMeQHBp1ZikVORzT1GHDmO6/pub?gid=759971230&single=true&output=csv&cachebust=';
+// ─────────────────────────────────────────────────────────────────────────────
+
+const OC={
+  'Waylon Binger':{bg:'#eeedfe',fg:'#4c3dc2'},
+  'Ryan Bruck':{bg:'#e1f5ee',fg:'#0f6e56'},
+  'Scott Shadle':{bg:'#faece7',fg:'#8a3a1a'},
+  'Peter Spillane':{bg:'#fbeaf0',fg:'#8a3256'},
+  'Jeff Morrison':{bg:'#e6f1fb',fg:'#1a4fa0'},
+  'Tim Nguyen':{bg:'#faeeda',fg:'#7a4a0a'},
+  'Chad Symens':{bg:'#b5d4f4',fg:'#0c447c'},
+  'Shelly Hagan':{bg:'#9fe1cb',fg:'#085041'},
+};
+const TC={
+  'Onboarding':{icon:'🚀',bg:'#faece7',sub:'New client onboarding'},
+  'Customer':{icon:'👤',bg:'#e6f1fb',sub:'Active customer projects'},
+  'R&D':{icon:'🔬',bg:'#eaf3de',sub:'Internal product development'},
+  'Internal Training':{icon:'🎓',bg:'#eeedfe',sub:'Team training'},
+};
+const PHASE_ORDER=['In Progress','Onboarding','Waiting on Client','R&D','Completed'];
+const PRIORITY_ORDER={'critical':0,'high':1,'medium':2,'low':3,'waiting client':4,'waiting':4,'completed':5};
+function sortByPriority(arr){
+  return [...arr].sort((a,b)=>{
+    const pa=PRIORITY_ORDER[(a.priority||'').toLowerCase()]??2;
+    const pb=PRIORITY_ORDER[(b.priority||'').toLowerCase()]??2;
+    return pa-pb;
+  });
+}
+const TYPE_ORDER=['Onboarding','Customer','R&D','Internal Training'];
+
+// ── CSV PARSER ────────────────────────────────────────────────────────────────
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g,'').trim().toLowerCase()
+    .replace(/client.*product/i,'client')
+    .replace(/project number/i,'project_number')
+    .replace(/\s+/g,'_'));
+  return lines.slice(1).map(line => {
+    const vals=[]; let cur='',inQ=false;
+    for(let i=0;i<line.length;i++){
+      if(line[i]==='"'){inQ=!inQ;}
+      else if(line[i]===','&&!inQ){vals.push(cur.trim());cur='';}
+      else{cur+=line[i];}
+    }
+    vals.push(cur.trim());
+    const row={};
+    headers.forEach((h,i)=>{row[h]=(vals[i]||'').replace(/^"|"$/g,'').trim();});
+    return row;
+  }).filter(r=>r.client&&r.client.length>0);
+}
+
+// ── INFER PHASE & TYPE FROM RAW DATA ─────────────────────────────────────────
+function inferPhase(r) {
+  const p=(r.priority||'').toLowerCase();
+  const proj=(r.project||'').toLowerCase();
+  const client=(r.client||'').toLowerCase();
+  // Priority column drives phase directly
+  if(p.includes('wait')) return 'Waiting on Client';
+  if(p.includes('complet')) return 'Completed';
+  // Onboarding — driven by project name or client context
+  if(proj.includes('onboard')||client.includes('onboard')) return 'Onboarding';
+  // R&D — internal product development projects
+  if(proj.includes('fabric version')||proj.includes('semantic')||proj.includes('trend report')||proj.includes('power bi')) return 'R&D';
+  // Everything else (Critical, High, Medium, Low) = In Progress
+  return 'In Progress';
+}
+function normalizeType(t){
+  if(!t) return '';
+  const l=t.toLowerCase().trim();
+  if(l.includes('onboard')) return 'Onboarding';
+  if(l.includes('r&d')||l.includes('r & d')||l.includes('research')) return 'R&D';
+  if(l.includes('internal')||l.includes('training')) return 'Internal Training';
+  if(l.includes('customer')||l.includes('client')) return 'Customer';
+  return t; // pass through as-is if unrecognized
+}
+function inferType(r) {
+  const proj=(r.project||'').toLowerCase();
+  const client=(r.client||'').toLowerCase();
+  const type=(r.type||r.project_type||'').toLowerCase();
+  if(type.includes('onboard')||proj.includes('onboard')) return 'Onboarding';
+  if(type.includes('training')||proj.includes('training')||client.includes('training')) return 'Internal Training';
+  if(type.includes('r&d')||proj.includes('fabric')||proj.includes('semantic')||proj.includes('trend report')||proj.includes('demo')||proj.includes('pbi')||proj.includes('power bi')) return 'R&D';
+  return 'Customer';
+}
+
+// ── RENDER HELPERS ────────────────────────────────────────────────────────────
+function badge(p){
+  const l=(p||'').toLowerCase();
+  if(l.includes('critical'))return'<span class="badge b-critical">Critical</span>';
+  if(l.includes('high'))return'<span class="badge b-high">High</span>';
+  if(l.includes('medium'))return'<span class="badge b-med">Medium</span>';
+  if(l.includes('wait'))return'<span class="badge b-wait">Waiting</span>';
+  if(l.includes('complet'))return'<span class="badge b-done">Done</span>';
+  if(l.includes('low'))return'<span class="badge b-low">Low</span>';
+  return`<span class="badge b-low">${p}</span>`;
+}
+function av(o){
+  const c=OC[o]||{bg:'#e8e6e0',fg:'#6b6860'};
+  const i=o?o.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2):'—';
+  return`<div class="av" style="background:${c.bg};color:${c.fg};">${i}</div>`;
+}
+function makeCard(p,showPhase){
+  const crit=(p.priority||'').toLowerCase().includes('critical');
+  const proj=[showPhase?p.phase:'',p.project].filter(Boolean).join(' · ');
+  const owner=p.owner||p.ba||'';
+  const notes=(p.notes||p.note||'').slice(0,130);
+  return`<div class="card${crit?' is-critical':''}">
+    <div class="card-top"><span class="card-name">${p.client}</span>${badge(p.priority)}</div>
+    ${proj?`<div class="card-proj">${proj}</div>`:''}
+    <div class="card-owner">${av(owner)}<span class="owner-label">${owner||'Unassigned'}</span></div>
+    ${notes?`<div class="card-note">${notes}${notes.length>=130?'…':''}</div>`:''}
+  </div>`;
+}
+
+function opsView(ps){
+  // Waiting on Client = priority column says "Waiting Client" — pulled out regardless of type
+  const waiting = sortByPriority(ps.filter(p=>(p.priority||'').toLowerCase().includes('wait')));
+  // All non-waiting projects, grouped by Type
+  const active = ps.filter(p=>!(p.priority||'').toLowerCase().includes('wait'));
+  const TYPE_COLS = ['Customer','Onboarding','R&D','Internal Training'];
+  const g={};
+  TYPE_COLS.forEach(t=>{
+    const r=sortByPriority(active.filter(p=>(p.type||'Customer')===t));
+    if(r.length) g[t]=r;
+  });
+  // Also catch any types not in TYPE_COLS
+  active.forEach(p=>{
+    const t=p.type||'Customer';
+    if(!TYPE_COLS.includes(t)&&!g[t]) g[t]=[];
+    if(!TYPE_COLS.includes(t)) g[t].push(p);
+  });
+  const cols=[...Object.keys(g)];
+  if(waiting.length) cols.push('⏳ Waiting on Client');
+  const colData={...g};
+  if(waiting.length) colData['⏳ Waiting on Client']=waiting;
+  const total=cols.length;
+  return`<div class="ops-grid" style="grid-template-columns:repeat(${Math.min(total,5)},minmax(0,1fr))">
+    ${cols.map(col=>{
+      const rows=colData[col];
+      const isWait=col.includes('Waiting');
+      return`<div>
+        <div class="col-head" style="${isWait?'background:var(--wait-bg);color:var(--wait);border-color:#b8cfee;':''}">${col}<span>${rows.length}</span></div>
+        <div class="col-body">${rows.map(p=>makeCard(p)).join('')}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+function ownerView(ps){
+  const o={};ps.forEach(p=>{const k=p.owner||p.ba||'Unassigned';if(!o[k])o[k]=[];o[k].push(p);});
+  Object.keys(o).forEach(k=>{o[k]=sortByPriority(o[k]);});
+  return Object.entries(o).sort((a,b)=>b[1].length-a[1].length).map(([n,rows])=>{
+    const c=OC[n]||{bg:'#e8e6e0',fg:'#6b6860'};
+    const i=n==='Unassigned'?'?':n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const crit=rows.filter(r=>(r.priority||'').toLowerCase().includes('critical')).length;
+    const wait=rows.filter(r=>(r.phase||'').includes('Waiting')).length;
+    return`<div class="section">
+      <div class="section-head">
+        <div class="section-av" style="background:${c.bg};color:${c.fg};">${i}</div>
+        <div><div class="section-title">${n}</div>
+        <div class="section-sub">${rows.length} project${rows.length!==1?'s':''}${crit?' · '+crit+' critical':''}${wait?' · '+wait+' waiting':''}</div></div>
+      </div>
+      <div class="cards-grid">${rows.map(p=>makeCard(p,true)).join('')}</div>
+    </div>`;
+  }).join('');
+}
+function typeView(ps){
+  return TYPE_ORDER.map(t=>{
+    const rows=sortByPriority(ps.filter(p=>p.type===t));if(!rows.length)return'';
+    const cfg=TC[t]||{icon:'📁',bg:'#f3f2ef',sub:''};
+    return`<div class="section">
+      <div class="section-head">
+        <div class="section-icon" style="background:${cfg.bg};">${cfg.icon}</div>
+        <div><div class="section-title">${t}</div>
+        <div class="section-sub">${rows.length} project${rows.length!==1?'s':''} · ${cfg.sub}</div></div>
+      </div>
+      <div class="cards-grid">${rows.map(p=>makeCard(p,true)).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+let currentTab='ops';
+let currentProjects=[];
+
+function renderDashboard(ps,tab){
+  currentTab=tab;
+  const total=ps.length;
+  const crit=ps.filter(p=>(p.priority||'').toLowerCase().includes('critical')).length;
+  const wait=ps.filter(p=>(p.phase||'').includes('Waiting')).length;
+  const onb=ps.filter(p=>(p.phase||'').includes('Onboarding')).length;
+  const done=ps.filter(p=>(p.phase||'').includes('Completed')).length;
+  const views={ops:opsView(ps),owner:ownerView(ps),type:typeView(ps)};
+  document.getElementById('app').innerHTML=`
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Total Projects</div><div class="stat-val c-navy">${total}</div></div>
+      <div class="stat"><div class="stat-label">Critical</div><div class="stat-val c-critical">${crit}</div></div>
+      <div class="stat"><div class="stat-label">Waiting Client</div><div class="stat-val c-wait">${wait}</div></div>
+      <div class="stat"><div class="stat-label">Onboarding</div><div class="stat-val">${onb}</div></div>
+      <div class="stat"><div class="stat-label">Completed</div><div class="stat-val c-done">${done}</div></div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab${tab==='ops'?' active':''}" onclick="renderDashboard(currentProjects,'ops')">Operational</button>
+      <button class="tab${tab==='owner'?' active':''}" onclick="renderDashboard(currentProjects,'owner')">By owner</button>
+      <button class="tab${tab==='type'?' active':''}" onclick="renderDashboard(currentProjects,'type')">By project type</button>
+    </div>
+    <div class="legend">
+      <span style="font-size:11px;font-weight:600;color:var(--text-muted);margin-right:2px;">Priority:</span>
+      <div class="leg"><div class="leg-dot" style="background:var(--critical)"></div>Critical</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--high)"></div>High</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--med)"></div>Medium</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--wait)"></div>Waiting</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--done)"></div>Completed</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--low)"></div>Low</div>
+    </div>
+    ${views[tab]}`;
+}
+
+// ── LOAD DATA ─────────────────────────────────────────────────────────────────
+async function loadData(){
+  document.getElementById('app').innerHTML=`
+    <div class="loading">
+      <div class="spinner"></div>
+      <span class="loading-text">Fetching live data from Google Sheets...</span>
+    </div>`;
+  document.getElementById('live-badge').style.display='none';
+
+  // Google Apps Script API — fetches live data directly from the Weekly Projects tab
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzo79JSnJQn6pnIQAoC_HcnQX_uuvnPndojQJS4m3f5dsMEhESrnsvvwTkbZSFfj2Cfkg/exec';
+  const urls = [
+    APPS_SCRIPT_URL + '?t=' + Date.now(),
+    APPS_SCRIPT_URL,
+  ];
+
+  let rows=[];
+  let success=false;
+
+  for(const url of urls){
+    try{
+      const res=await fetch(url,{cache:'no-store'});
+      if(!res.ok) continue;
+      const text=await res.text();
+      if(!text||text.length<10) continue;
+      let parsed=[];
+      try{ parsed=JSON.parse(text); if(!Array.isArray(parsed))parsed=[]; }
+      catch(e){ parsed=parseCSV(text); }
+      if(parsed.length>0){
+        rows=parsed;
+        success=true;
+        break;
+      }
+    }catch(e){
+      console.warn('Fetch failed:',url,e.message);
+    }
+  }
+
+  if(!success||rows.length===0){
+    document.getElementById('app').innerHTML=`
+      <div class="error-msg">
+        <strong>Could not load live data from Google Sheets</strong>
+        Make sure the sheet is published: in Google Sheets go to File → Share → Publish to web → select the "Weekly Projects" tab → CSV → Publish. Then click Refresh above.
+      </div>`;
+    return;
+  }
+
+  // Map raw CSV columns to our data model
+  currentProjects = rows.map(r=>{
+    // Normalize — handles both JSON keys and CSV header variations
+    const g=(...ks)=>{for(const k of ks){const v=r[k]||r[k.toLowerCase()]||'';if(v)return v.toString().trim();}return '';};
+    const client   = g('client','client_product','client/product') || Object.values(r)[0]||'';
+    const project  = g('project');
+    const priority = g('priority');
+    const owner    = g('owner');
+    const notes    = g('notes','note');
+    const status   = g('status');
+    const rawPhase = g('phase');
+    const rawType  = g('type','project_type','Type');
+    const phase = rawPhase || inferPhase({priority,status,project,client});
+    const type  = normalizeType(rawType) || inferType({project,client});
+    return {client,project,priority,owner,notes,phase,type,
+            engineer:g('engineer'),ba:g('ba'),
+            project_number:g('project_number')};
+  }).filter(r=>r.client&&r.client.length>0);
+
+  document.getElementById('live-badge').style.display='flex';
+  const now=new Date();
+  document.getElementById('last-updated').textContent=
+    'Updated '+now.toLocaleDateString('en-US',{month:'short',day:'numeric'})+
+    ' at '+now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+
+  renderDashboard(currentProjects, currentTab);
+}
+
+loadData();
+</script>
+
+</body></html>
