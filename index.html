@@ -106,22 +106,49 @@ header{background:var(--navy);padding:0 24px;height:56px;display:flex;align-item
 </head>
 <body>
 
+The browser popup (prompt()) is unreliable because Chrome blocks it by default on many sites. The better solution is to replace it with a custom password screen built into the page itself.
+Here's a drop-in replacement for your script that shows a clean login overlay instead:
+html<script>
   (function() {
-    const correct = "scheduling"; // 👈 your password
+    const correct = "scheduling";
     
-    // Hide the entire body immediately
+    // Hide page immediately
     document.documentElement.style.visibility = "hidden";
     
-    const entered = prompt("Enter password to access this page:");
-    if (entered === correct) {
-      // Correct password — show the page
+    window.addEventListener("DOMContentLoaded", function() {
+      // Create overlay
+      const overlay = document.createElement("div");
+      overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:#0f2744;display:flex;align-items:center;justify-content:center;z-index:99999;";
+      
+      overlay.innerHTML = `
+        <div style="background:#fff;padding:40px;border-radius:12px;text-align:center;width:320px;box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+          <h2 style="font-family:sans-serif;color:#0f2744;margin-bottom:8px;">Weekly Scheduling</h2>
+          <p style="font-family:sans-serif;color:#888;font-size:14px;margin-bottom:24px;">Enter your password to continue</p>
+          <input id="pw-input" type="password" placeholder="Password" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:15px;box-sizing:border-box;margin-bottom:12px;">
+          <p id="pw-error" style="color:red;font-family:sans-serif;font-size:13px;display:none;margin-bottom:8px;">Incorrect password. Try again.</p>
+          <button onclick="checkPW()" style="width:100%;padding:10px;background:#0f2744;color:#fff;border:none;border-radius:6px;font-size:15px;cursor:pointer;">Enter</button>
+        </div>
+      `;
+      
+      document.body.appendChild(overlay);
       document.documentElement.style.visibility = "visible";
-    } else {
-      // Wrong password — show access denied, nothing else
-      document.documentElement.style.visibility = "visible";
-      document.body.innerHTML = "<h2 style='font-family:sans-serif;text-align:center;margin-top:20%;'>Access Denied. Please refresh to try again.</h2>";
-      document.title = "Access Denied";
-    }
+      document.getElementById("pw-input").focus();
+      
+      // Allow pressing Enter key
+      document.getElementById("pw-input").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") checkPW();
+      });
+    });
+    
+    window.checkPW = function() {
+      const entered = document.getElementById("pw-input").value;
+      if (entered === correct) {
+        document.querySelector("div[style*='z-index:99999']").remove();
+      } else {
+        document.getElementById("pw-error").style.display = "block";
+        document.getElementById("pw-input").value = "";
+      }
+    };
   })();
   
 <header>
