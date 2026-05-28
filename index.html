@@ -106,13 +106,21 @@ header{background:var(--navy);padding:0 24px;height:56px;display:flex;align-item
 </head>
 <body>
 
-    (function() {
-    const correct = "scheduling"; // 👈 change this
+  (function() {
+    const correct = "scheduling"; // 👈 your password
+    
+    // Hide the entire body immediately
+    document.documentElement.style.visibility = "hidden";
+    
     const entered = prompt("Enter password to access this page:");
-    if (entered !== correct) {
+    if (entered === correct) {
+      // Correct password — show the page
+      document.documentElement.style.visibility = "visible";
+    } else {
+      // Wrong password — show access denied, nothing else
+      document.documentElement.style.visibility = "visible";
       document.body.innerHTML = "<h2 style='font-family:sans-serif;text-align:center;margin-top:20%;'>Access Denied. Please refresh to try again.</h2>";
       document.title = "Access Denied";
-      throw new Error("Access denied");
     }
   })();
   
