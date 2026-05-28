@@ -106,9 +106,7 @@ header{background:var(--navy);padding:0 24px;height:56px;display:flex;align-item
 </head>
 <body>
 
-The browser popup (prompt()) is unreliable because Chrome blocks it by default on many sites. The better solution is to replace it with a custom password screen built into the page itself.
-Here's a drop-in replacement for your script that shows a clean login overlay instead:
-html<script>
+<script>
   (function() {
     const correct = "scheduling";
     
